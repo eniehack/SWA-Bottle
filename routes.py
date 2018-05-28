@@ -1,16 +1,18 @@
-from bottle import HTTPResponse, abort, request, get
-from tinydb import TinyDB, Query
 import json
+from tinydb import TinyDB, Query
+from bottle import HTTPResponse, request, get
 
 db = TinyDB("db.json")
 table = db.table("subway")
 Data = Query()
-#i = 0
-res ={}
 
 
 @get('/search')
 def search():
+    '''パラメータを取得し、その条件を満たしたデータだけを返す'''
+
+    res = {}
+    i = 0
 
     # パラメータを取得
     name = request.params.name
@@ -35,14 +37,13 @@ def search():
             # パラメータが指定されていない場合、全てのエントリを返す
             get_data = table.all()
 
-    i = 0
     for row in get_data:
         res[i] = row
         i = i + 1
 
     body = json.dumps(res)
 
-    r = HTTPResponse(status=200, body=body)
-    r.set_header('Content-Type', 'application/json')
+    resp = HTTPResponse(status=200, body=body)
+    resp.set_header('Content-Type', 'application/json')
 
-    return r
+    return resp
